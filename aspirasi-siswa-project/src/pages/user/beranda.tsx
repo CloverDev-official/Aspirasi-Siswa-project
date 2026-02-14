@@ -1,45 +1,38 @@
 import { motion } from "framer-motion"
-import { div } from "framer-motion/client"
 import { Link } from "react-router-dom"
 
-const MotionLink = motion(Link)
 
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
+export default function berandaUser() {
+  
+  const MotionLink = motion(Link)
+  
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
     },
-  },
-}
-
-const item = {
-  hidden: { opacity: 0, y: 60 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.7,
-      ease: "easeOut",
+  }
+  
+  const item = {
+    hidden: { opacity: 0, y: 60 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        ease: "easeOut",
+      },
     },
-  },
-}
+  }
 
-const Redirect = () => {
   return (
     
-    <motion.div initial="hidden" animate="show" variants={container}>
-      <div className="flex justify-end">
-          <Link to="login-admin" >
-              <motion.button variants={item} className="flex items-center justify-center bg-transparent bg-opacity-30 backdrop-blur-lg py-2 px-4 rounded-xl shadow-[inset_2px_2px_4px_#E8BB86,inset_-2px_-2px_4px_#C99A5E]" whileHover={{scale: 1.05}} whileTap={{scale: 1}} >
-                  <p className="text-white capitalize">login admin</p>
-              </motion.button>
-          </Link>
-      </div>
-      <main className="flex items-center justify-center min-h-[95vh]">
+    <motion.div className="relative" initial="hidden" animate="show" variants={container}>
+      <main className="mt-20">
         <motion.div
-          className="mt-32 md:mt-20"
           variants={container}
         >
           {/* TEKS */}
@@ -90,10 +83,7 @@ const Redirect = () => {
             </MotionLink>
           </motion.div>
         </motion.div>
-
       </main>
     </motion.div>
   )
 }
-
-export default Redirect

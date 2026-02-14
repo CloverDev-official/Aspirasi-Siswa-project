@@ -1,0 +1,91 @@
+import { motion } from "framer-motion"
+import { ArrowFromBottom } from "@boxicons/react"
+import React, { useState } from "react"
+export default function Aspirasi() {
+    const [showSuccess, setShowSuccess] = useState(false)
+    const [loading, setLoading] = useState(false) 
+    const [nama, setNama ] = useState("")
+    const [harapan, setHarapan] = useState("")
+    const [ file, setFile] = useState("")
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        sendToApi()
+    }
+
+    const sendToApi = async () => {
+        try {
+            setLoading(true)
+            const res = await fetch("http://localhost/api/menfess",{
+                method: "POST",
+                headers: {
+                    "Content-type" : "application/json"
+                },
+                body: JSON.stringify({
+                    nama,
+                    harapan,
+                    file,
+                }),
+            })
+
+            if (res.ok) {
+                setShowSuccess(false)
+            }
+        } finally {
+            setLoading(false)
+        }
+    }
+    return (
+        <div className="mt-14 w-full md:w-3xl" >
+            <form onSubmit={handleSubmit}  className="flex flex-col gap-4" >
+                {/* nanma pengirim */}
+                <div className="flex flex-col gap-1" >
+                    <label className="text-white font-medium text-lg capitalize" >nama ( Opsional )</label>
+                    <input type="text" value={nama} onChange={(e) => setNama(e.target.value)} className="px-4 py-2 rounded-lg bg-white shadow-md transition-colors duration-200 focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 border-yellow-400" placeholder="nama Anda" />
+                </div>
+                {/* pesan */}
+                <div className="flex flex-col gap-1">
+                    <label className="text-white font-medium text-lg capitalize" >harapan</label>
+                    <textarea required value={harapan} onChange={(e) => setHarapan(e.target.value)} className="bg-white shadow-md h-48 p-4 rounded-lg transition-colors duration-200 focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 border-yellow-400"></textarea>
+                </div>
+                {/* gambar atau video */}
+                <div className="flex flex-col gap-1 relative" >
+                    <label className="text-white font-medium text-lg capitalize" >gambar atau video</label>
+                    <input value={file} onChange={(e) => setFile(e.target.value)}  type="file" className="px-4 pl-12 py-2 rounded-lg bg-white shadow-md transition-colors duration-200 focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 border-yellow-400 text-gray-400" />
+                    <div className="absolute left-5 top-10">
+                        <ArrowFromBottom className="text-gray-400" />
+                    </div>
+                </div>
+                {/* btn  kirim */}
+                <motion.button type="submit" disabled={loading} whileHover={{scale: 1.05}} whileTap={{scale:1}} className="bg-[#942B3A] rounded-lg px-4 py-1 shadow-md text-white capitalize w-28 mt-5 shadow-[inset_2px_2px_4px_#E8BB86,inset_-2px_-2px_4px_#C99A5E]">
+                    {loading ? "Mengirim" : "kirim"}
+                </motion.button>
+            </form>
+            {/* MODAL KONFIRMASI */}
+            {showSuccess&& (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 overflow-hidden">
+                    <div className="h-[70dvh] bg-linear-to-b from-[#7A1E2D] via-[#B23A48] to-[#FBE49D] rounded-xl p-6 w-80 text-center flex  items-center">
+                        <div>
+                            <div className="flex justify-center items-center">
+                                <img src="/gambar-modal-konfirmasi.png" alt="" />
+                            </div>
+                            <p className="text-white text-shadow-sm font-bold text-xl mt-5">
+                                Aspirasi Terkirim! ✨
+                            </p>
+                            <p className="text-white text-lg text-shadow-sm mt-2" >
+                                Terima kasih sudah menyampaikan aspirasi kamu.
+                            </p>
+
+                            <button
+                                onClick={() => setShowSuccess(false)}
+                                className="bg-[#942B3A] p-4 w-52 rounded-lg text-center text-white shadow-[inset_2px_2px_4px_#E8BB86,inset_-2px_-2px_4px_#C99A5E] mt-5 transition-transform ease-in-out duration-200 hover:scale-[1.05] active:scale-[1]"
+                            >
+                                kembali
+                            </button>        
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}

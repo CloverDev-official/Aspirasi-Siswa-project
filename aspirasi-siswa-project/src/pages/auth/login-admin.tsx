@@ -1,41 +1,30 @@
 import { motion } from "framer-motion"
-import { Link } from "react-router-dom"
-import { ChevronLeft } from "@boxicons/react"
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-    },
-  },
-}
 
-const item = {
-  hidden: { opacity: 0, y: 60 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.7,
-      ease: "easeOut",
-    },
-  },
-}
-const LoginAdmin = () => {
+export default function LoginAdmin() {
+    const container = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: {
+            staggerChildren: 0.2,
+            },
+        },
+    }
+
+    const item = {
+        hidden: { opacity: 0, y: 60 },
+        show: {
+            opacity: 1,
+            y: 0,
+            transition: {
+            duration: 0.7,
+            ease: "easeOut",
+            },
+        },
+    }
     return (
         <motion.div initial="hidden" animate="show" variants={container} >
-            <div className="flex justify-start">
-                <Link to="/" >
-                    <motion.button variants={item} className="flex items-center justify-center bg-transparent bg-opacity-30 backdrop-blur-lg py-2 px-4 rounded-xl shadow-[inset_2px_2px_4px_#E8BB86,inset_-2px_-2px_4px_#C99A5E]" whileHover={{scale: 1.05}} whileTap={{scale: 1}} >
-                        <p className="text-white capitalize flex  gap-0.5 items-center justify-center">
-                            <ChevronLeft className="text-white w-6 h-6" />
-                             back
-                        </p>
-                    </motion.button>
-                </Link>
-            </div>
-            <main className="flex justify-center items-center min-h-[95vh]">
+            <main className="mt-10">
                 <div>
                     <motion.div variants={container}>
                         {/* judul */}
@@ -69,5 +58,3 @@ const LoginAdmin = () => {
         </motion.div>
     )
 }
-
-export default LoginAdmin

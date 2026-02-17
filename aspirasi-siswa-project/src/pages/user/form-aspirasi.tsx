@@ -16,20 +16,24 @@ export default function Aspirasi() {
     const sendToApi = async () => {
         try {
             setLoading(true)
-            const res = await fetch("http://localhost/api/menfess",{
+
+            const formData = new FormData()
+            formData.append("nama", nama)
+            formData.append("harapan", harapan)
+            if (file) {
+                formData.append("file", file)
+            }
+
+            const res = await fetch("http://localhost/api/menfess", {
                 method: "POST",
-                headers: {
-                    "Content-type" : "application/json"
-                },
-                body: JSON.stringify({
-                    nama,
-                    harapan,
-                    file,
-                }),
+                body: formData
             })
 
             if (res.ok) {
-                setShowSuccess(false)
+                setShowSuccess(true)
+                setNama("")
+                setHarapan("")
+                setFile(null)
             }
         } finally {
             setLoading(false)
@@ -51,7 +55,14 @@ export default function Aspirasi() {
                 {/* gambar atau video */}
                 <div className="flex flex-col gap-1 relative" >
                     <label className="text-white font-medium text-lg capitalize" >gambar atau video</label>
-                    <input value={file} onChange={(e) => setFile(e.target.value)}  type="file" className="px-4 pl-12 py-2 rounded-lg bg-white shadow-md transition-colors duration-200 focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 border-yellow-400 text-gray-400" />
+                    <input 
+                        onChange={(e) => {
+                            if (e.target.files) {
+                                setFile(e.target.files[0])
+                            }
+                        }}
+                        type="file"
+                        className="px-4 pl-12 py-2 rounded-lg bg-white shadow-md transition-colors duration-200 focus:outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-400 border-yellow-400 text-gray-400" />
                     <div className="absolute left-5 top-10">
                         <ArrowFromBottom className="text-gray-400" />
                     </div>

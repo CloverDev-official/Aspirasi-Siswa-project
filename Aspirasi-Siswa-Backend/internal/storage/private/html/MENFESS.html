@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Menfess</title>
+
+    <style>
+      @font-face {
+        font-family: "One Little Font";
+        src: url("CHANGE FONT PATH")
+          format("woff2");
+      }
+
+      body {
+        font-family: "One Little Font";
+        margin: 0;
+        background: #111;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .frame {
+        width: min(90vw, 500px);
+        aspect-ratio: 4/5; /* dari 9/16 */
+        position: relative;
+        overflow: hidden;
+      }
+
+      .canvas {
+        width: 1440px;   /* dari 1080 */
+        height: 1800px;  /* dari 1920 */
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform-origin: top left;
+      }
+
+      .canvas img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .box {
+        position: absolute;
+        top: 30%;   /* sebelumnya 31% */
+        height: 52%; /* sebelumnya 39% */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 57%;
+        padding: 30px;
+        border-radius: 20px;
+        overflow: hidden;
+
+        /* background-color: #34a53094; */
+      }
+
+      .teks {
+        padding: 20px 20px;
+        width: 100%;
+        height: 100%;
+        font-size: 60px;
+        color: #ffd86b;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+
+        /* background-color: #bbc5c342; */
+
+        filter: drop-shadow(0 0 10px rgba(250, 210, 101, 0.8))
+          drop-shadow(0 0 20px rgba(245, 201, 79, 0.6));
+      }
+
+      .item {
+        display: flex;
+        align-items: center;
+        line-height: 1.3;
+      }
+
+      .label {
+        font-weight: bold;
+        margin-right: 10px;
+        flex-shrink: 0;
+        transform: scaleY(1.4);
+      }
+
+      /* TO & FROM */
+      .normal .value {
+        white-space: nowrap;
+        flex: 1;
+        overflow: hidden;
+      }
+
+      /* MESSAGE */
+      .message {
+        position: relative;
+        padding-left: 260px;
+        align-items: flex-start;
+      }
+
+      .message .label {
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+
+      .message .value {
+        display: block;
+        line-height: 1.3;
+        word-break: break-word;
+      }
+
+      #messageText {
+        width: 100%;
+        height: 400px;
+        overflow: hidden;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start; /* dari atas */
+        align-items: flex-start;
+
+        /* background-color: #f6f6ff34; */
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="frame" id="frame_photo">
+      <div class="canvas" id="canvas">
+        <img src="CHANGE IMAGE PATH" />
+
+        <div class="box">
+          <div class="teks">
+            <div class="item normal">
+              <span class="label">TO:</span>
+              <span class="value">CHANGE TO</span>
+            </div>
+
+            <div class="item normal">
+              <span class="label">FROM:</span>
+              <span class="value">CHANGE FROM</span>
+            </div>
+
+            <div class="item message">
+              <span class="label">MESSAGE:</span>
+              <span class="value" id="messageText">CHANGE MESSAGE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 🔥 CACHE ELEMENT (biar gak query berulang)
+      const frame = document.querySelector(".frame");
+      const canvas = document.getElementById("canvas");
+      const values = document.querySelectorAll(".value");
+      const normalAndSongValues = document.querySelectorAll(
+        ".normal .value, .song .value",
+      );
+      const message = document.getElementById("messageText");
+
+      // 🔥 SCALE CANVAS
+      function scaleCanvas() {
+        const scale = frame.offsetWidth / 1440; // dari 1080
+        canvas.style.transform = `scale(${scale})`;
+      }
+
+      // 🔥 SINGLE LINE FIT (lebih cepat)
+      function fitSingleLine(el, max = 60, min = 25) {
+        const container = el.parentElement;
+
+        let maxWidth;
+        if (container.classList.contains("song")) {
+          maxWidth = container.clientWidth;
+        } else {
+          const label = container.querySelector(".label");
+          maxWidth = container.clientWidth - label.offsetWidth - 10;
+        }
+
+        let size = max;
+        el.style.fontSize = size + "px";
+
+        // 🔥 pakai rasio, bukan decrement 1-1
+        if (el.scrollWidth > maxWidth) {
+          const ratio = maxWidth / el.scrollWidth;
+          size = Math.max(min, Math.floor(size * ratio));
+          el.style.fontSize = size + "px";
+        }
+      }
+
+      // 🔥 MESSAGE FIT (lebih efisien)
+      function fitMessage() {
+        const max = 60;
+        const min = 20;
+
+        let low = min;
+        let high = max;
+        let best = min;
+
+        while (low <= high) {
+          let mid = Math.floor((low + high) / 2);
+          message.style.fontSize = mid + "px";
+
+          if (message.scrollHeight <= message.clientHeight) {
+            best = mid; // masih muat → coba gedein
+            low = mid + 1;
+          } else {
+            high = mid - 1; // kepenuhan → kecilin
+          }
+        }
+
+        message.style.fontSize = best + "px";
+      }
+
+      // 🔥 EMPTY FIX
+      function changeEmpty() {
+        values.forEach((el) => {
+          if (!el.textContent.trim()) {
+            el.textContent = "-";
+          }
+        });
+      }
+
+      // 🔥 AUTO FIT
+      function autoFitAll() {
+        // reset font
+        values.forEach((el) => (el.style.fontSize = "60px"));
+
+        normalAndSongValues.forEach((el) => fitSingleLine(el));
+        fitMessage();
+      }
+
+      // 🔥 DEBOUNCE (anti lag saat resize)
+      function debounce(fn, delay = 100) {
+        let timeout;
+        return function () {
+          clearTimeout(timeout);
+          timeout = setTimeout(fn, delay);
+        };
+      }
+
+      // 🔥 MAIN HANDLER
+      function handleResize() {
+        scaleCanvas();
+        changeEmpty();
+        autoFitAll();
+      }
+
+      // 🔥 EVENT
+      window.addEventListener("load", handleResize);
+      window.addEventListener("resize", debounce(handleResize, 100));
+    </script>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@layer base {
+    ::-webkit-scrollbar {
+        display: none;
+    }
+}
+/* === FONT === */
+
+/* figma hand */
+.figma-hand {
+  font-family: "Caveat", cursive;
+}

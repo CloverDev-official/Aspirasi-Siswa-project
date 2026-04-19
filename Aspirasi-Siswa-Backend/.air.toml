@@ -1,0 +1,39 @@
+# .air.toml
+
+root = "."
+tmp_dir = "tmp"
+
+[build]
+  # File utama
+  cmd = "go build -o ./tmp/app.exe ./cmd/server/main.go"
+  bin = "tmp/app.exe"
+
+  # Delay rebuild (ms)
+  delay = 1000
+
+  # File yang diperhatikan
+  include_ext = ["go", "env"]
+
+  # Folder yang diabaikan
+  exclude_dir = ["tmp", "vendor", "node_modules", ".git"]
+
+  # File yang diabaikan
+  exclude_file = []
+
+  # Log build error
+  log = "build-errors.log"
+
+  # Hentikan proses jika terjadi error saat build
+  stop_on_error = true
+
+[log]
+  time = true
+
+[color]
+  main = "cyan"
+  watcher = "yellow"
+  build = "green"
+  runner = "magenta"
+
+[misc]
+  clean_on_exit = true

@@ -1,12 +1,12 @@
-FROM node:22-alpine AS builder
+FROM oven/bun:1 AS builder
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
-RUN corepack enable && pnpm install
+COPY package.json bun.lock ./
+RUN bun install
 
 COPY . .
-RUN pnpm build
+RUN bun run build
 
 FROM nginx:alpine
 

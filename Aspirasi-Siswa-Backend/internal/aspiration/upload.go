@@ -15,7 +15,7 @@ import (
 
 const (
 	uploadDir     = "internal/storage/private/aspiration"
-	maxUploadSize = 15 << 20 // 15MB
+	maxUploadSize = 2 << 20 // 15MB
 )
 
 var allowedExtensions = map[string]bool{

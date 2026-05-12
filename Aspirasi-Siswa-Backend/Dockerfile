@@ -27,9 +27,9 @@ RUN chmod +x /usr/local/bin/entrypoint.sh
 
 COPY --from=builder /app/server_app .
 COPY --from=builder /app/migrate_app .
-COPY --from=builder /app/.env* ./
+COPY --from=builder /app/.env.example ./.env
 
 EXPOSE 3000
 
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["./server_app"]

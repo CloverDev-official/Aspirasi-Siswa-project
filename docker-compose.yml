@@ -21,7 +21,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DB_HOST=db
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_NAME: ${MYSQL_DATABASE}
     env_file:
       - ./Aspirasi-Siswa-Backend/.env
     volumes:
